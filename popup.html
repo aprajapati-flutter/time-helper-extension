@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Office Time Helper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <h2>Today's Status</h2>
+    <div id="dayEndAt" class="day-end">--:--:-- --</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="label">Check In Time</div>
+      <div id="checkInTime" class="value">--:--:-- --</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Total In-Time</div>
+      <div id="totalInTime" class="value">00:00:00</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Checkout Time</div>
+      <div id="checkoutTime" class="value">--:--:-- --</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Remaining Time</div>
+      <div id="remainingTime" class="value">00:00</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Break Used</div>
+      <div id="breakUsed" class="value">00:00:00</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Break Remaining</div>
+      <div id="breakRemaining" class="value">00:00:00</div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

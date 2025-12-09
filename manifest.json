@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Office Time Helper",
+  "description": "Calculates logout time, in-time, break usage, and remaining time.",
+  "version": "2.1",
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Time Helper"
+  }
+}
