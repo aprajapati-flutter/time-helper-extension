@@ -11,10 +11,9 @@ function parseTimeStringToDate(timeStr) {
   let s = timeStr.trim();
   if (s === "-" || s.length === 0) return null;
 
-  // sometimes the string could include extra spaces - normalize
+  // normalize
   const parts = s.split(/\s+/);
   if (parts.length < 2) {
-    // maybe no AM/PM (assume 24h) -> try to parse directly
     const t = parts[0];
     const comps = t.split(":").map(Number);
     if (comps.length >= 2) {
@@ -58,18 +57,9 @@ function msToHms(ms) {
 
 function msToHM_roundedUpMinutes(ms) {
   if (ms < 0) ms = 0;
-  let totalMinutes = Math.ceil(ms / 60000); // round up to show remaining reasonably
+  let totalMinutes = Math.ceil(ms / 60000); // round up minutes
   let h = Math.floor(totalMinutes / 60);
   let m = totalMinutes % 60;
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-}
-
-function msToBadgeHHMM(ms) {
-  if (ms <= 0) return "00:00";
-  let totalMinutes = Math.ceil(ms / 60000);
-  let h = Math.floor(totalMinutes / 60);
-  let m = totalMinutes % 60;
-  // max two digits hours (pad)
   return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
 }
 
@@ -156,15 +146,12 @@ async function computeAndUpdate() {
     if (remainingPresenceFromNowMs < 0) remainingPresenceFromNowMs = 0;
 
     // Estimated checkout:
-    // if currentSession exists: checkout = currentSession.inDate + (required - completedBeforeCurrent)
-    // else checkout = now + remaining (fallback)
     let estimatedCheckout = null;
     if (currentSession) {
       let remainingForCheckoutMs = requiredPresenceMs - completedBeforeCurrentMs;
       if (remainingForCheckoutMs < 0) remainingForCheckoutMs = 0;
       estimatedCheckout = new Date(currentSession.inDate.getTime() + remainingForCheckoutMs);
     } else {
-      // will assume somebody comes in NOW -> checkout is now + remaining
       estimatedCheckout = new Date(now.getTime() + remainingPresenceFromNowMs);
     }
 
@@ -178,7 +165,10 @@ async function computeAndUpdate() {
     const totalInTimeMs = completedBeforeCurrentMs + (currentSession ? elapsedCurrentMs : 0);
     const totalInTimeStr = msToHms(totalInTimeMs);
     const checkoutStr = format12WithSec(estimatedCheckout);
-    const remainingHM = msToHM_roundedUpMinutes(remainingPresenceFromNowMs);
+
+    // === CHANGED: show full HH:MM:SS remaining in UI (updates every second) ===
+    const remainingHMS = msToHms(remainingPresenceFromNowMs);
+
     const breakUsedStr = msToHms(breakUsedMs);
     const breakRemainingStr = msToHms(breakRemainingMs);
 
@@ -187,11 +177,11 @@ async function computeAndUpdate() {
     document.getElementById("checkInTime").innerText = checkInTimeStr;
     document.getElementById("totalInTime").innerText = totalInTimeStr;
     document.getElementById("checkoutTime").innerText = checkoutStr;
-    document.getElementById("remainingTime").innerText = remainingHM;
+    document.getElementById("remainingTime").innerText = remainingHMS; // HH:MM:SS now
     document.getElementById("breakUsed").innerText = breakUsedStr;
     document.getElementById("breakRemaining").innerText = breakRemainingStr;
 
-    // Update badge via background
+    // Update badge via background (badge should be HH:MM)
     chrome.runtime.sendMessage({ remainingMs: remainingPresenceFromNowMs });
 
   } catch (err) {

@@ -3,12 +3,25 @@
   "name": "Office Time Helper",
   "description": "Calculates logout time, in-time, break usage, and remaining time.",
   "version": "2.1",
-  "permissions": ["activeTab", "scripting"],
+
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "notifications",
+    "alarms"
+  ],
+
   "background": {
     "service_worker": "background.js"
   },
+
   "action": {
+    "default_icon": "logo.png",
     "default_popup": "popup.html",
     "default_title": "Time Helper"
+  },
+
+  "icons": {
+    "128": "logo.png"
   }
 }
